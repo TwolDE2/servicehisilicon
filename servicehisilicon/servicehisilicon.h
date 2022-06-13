@@ -1,7 +1,6 @@
 #ifndef __serviceHisilicon_h
 #define __serviceHisilicon_h
 
-#include <lib/base/message.h>
 #include <lib/service/iservice.h>
 #include <lib/dvb/pmt.h>
 #include <lib/dvb/subtitle.h>
@@ -10,6 +9,7 @@
 #include <lib/gui/esubtitle.h>
 
 #include "hisilicon.h"
+#include "message.h"
 
 class eStaticServiceHisiliconInfo;
 

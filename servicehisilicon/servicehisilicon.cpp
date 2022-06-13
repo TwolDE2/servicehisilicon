@@ -361,7 +361,7 @@ void eServiceHisilicon::video_event(int)
 		struct video_event evt;
 		if (::ioctl(m_video_fd, VIDEO_GET_EVENT, &evt) < 0)
 		{
-			eDebug("[eServiceHisilicon] VIDEO_GET_EVENT failed: %m");
+			eDebug("[eServiceHisilicon][video_event] VIDEO_GET_EVENT failed: %m");
 			break;
 		}
 		else
@@ -371,29 +371,29 @@ void eServiceHisilicon::video_event(int)
 				m_aspect = evt.u.size.aspect_ratio == 0 ? 2 : 3;  // convert dvb api to etsi
 				m_height = evt.u.size.h;
 				m_width = evt.u.size.w;
-				eDebug("[eServiceHisilicon] SIZE_CHANGED %dx%d aspect %d", m_width, m_height, m_aspect);
+				eDebug("[eServiceHisilicon][video_event] SIZE_CHANGED %dx%d aspect %d", m_width, m_height, m_aspect);
 				m_event((iPlayableService*)this, evVideoSizeChanged);
 			}
 			else if (evt.type == VIDEO_EVENT_FRAME_RATE_CHANGED)
 			{
 				m_framerate = evt.u.frame_rate;
-				eDebug("[eServiceHisilicon] FRAME_RATE_CHANGED %d fps", m_framerate);
+				eDebug("[eServiceHisilicon][video_event] FRAME_RATE_CHANGED %d fps", m_framerate);
 				m_event((iPlayableService*)this, evVideoFramerateChanged);
 			}
 			else if (evt.type == 16 /*VIDEO_EVENT_PROGRESSIVE_CHANGED*/)
 			{
 				m_progressive = evt.u.frame_rate;
-				eDebug("[eServiceHisilicon] PROGRESSIVE_CHANGED %d", m_progressive);
+				eDebug("[eServiceHisilicon][video_event] PROGRESSIVE_CHANGED %d", m_progressive);
 				m_event((iPlayableService*)this, evVideoProgressiveChanged);
 			}
 			else if (evt.type == 17 /*VIDEO_EVENT_GAMMA_CHANGED*/)
 			{
 				m_gamma = evt.u.frame_rate;
-				eDebug("[eServiceHisilicon] GAMMA_CHANGED %d", m_gamma);
+				eDebug("[eServiceHisilicon][video_event] GAMMA_CHANGED %d", m_gamma);
 				m_event((iPlayableService*)this, evVideoGammaChanged);
 			}
 			else
-				eDebug("[eServiceHisilicon] unhandled DVBAPI Video Event %d", evt.type);
+				eDebug("[eServiceHisilicon][video_event] unhandled DVBAPI Video Event %d", evt.type);
 		}
 	}
 }
@@ -493,14 +493,14 @@ void eServiceHisilicon::netlink_event(int)
 				break;
 			case 9: /* stream id */
 				memcpy(&streamid, (unsigned char*)NLMSG_DATA(nlh) + sizeof(uint32_t), sizeof(streamid));
-				eDebug("[eServiceHisilicon] streamid: program %u, video %u, audio %u, subtitle %u", streamid.programid, streamid.videostreamid, streamid.audiostreamid, streamid.subtitlestreamid);
+				eDebug("[eServiceHisilicon][netlink_event] streamid: program %u, video %u, audio %u, subtitle %u", streamid.programid, streamid.videostreamid, streamid.audiostreamid, streamid.subtitlestreamid);
 				m_event((iPlayableService*)this, evUpdatedInfo);
 				break;
 			case 10: /* player state */
 				{
 					int32_t state;
 					memcpy(&state, (unsigned char*)NLMSG_DATA(nlh) + sizeof(uint32_t), sizeof(state));
-					eDebug("[eServiceHisilicon] player state %d-->%d", m_player_state, state);
+					eDebug("[eServiceHisilicon][netlink_event] player state %d-->%d", m_player_state, state);
 					switch (state)
 					{
 					case 0: /* init */
@@ -536,7 +536,7 @@ void eServiceHisilicon::netlink_event(int)
 				{
 					int32_t error;
 					memcpy(&error, (unsigned char*)NLMSG_DATA(nlh) + sizeof(uint32_t), sizeof(error));
-					eDebug("[eServiceHisilicon] error %d", error);
+					eDebug("[eServiceHisilicon][netlink_event] error %d", error);
 					switch (error)
 					{
 					case 0: /* no error */
@@ -582,7 +582,7 @@ void eServiceHisilicon::netlink_event(int)
 						uint32_t percentage;
 					} info;
 					memcpy(&info, (unsigned char*)NLMSG_DATA(nlh) + sizeof(uint32_t), sizeof(info));
-					eDebug("[eServiceHisilicon] buffering %u %u%%", info.status, info.percentage);
+					eDebug("[eServiceHisilicon][netlink_event] buffering %u %u%%", info.status, info.percentage);
 					m_bufferpercentage = info.percentage;
 					switch (info.status)
 					{
@@ -617,7 +617,7 @@ void eServiceHisilicon::netlink_event(int)
 						int32_t errorcode;
 					} info;
 					memcpy(&info, (unsigned char*)NLMSG_DATA(nlh) + sizeof(uint32_t), sizeof(info));
-					eDebug("[eServiceHisilicon] network info %u %d", info.status, info.errorcode);
+					eDebug("[eServiceHisilicon][netlink_event] network info %u %d", info.status, info.errorcode);
 					switch (info.status)
 					{
 					case 0: /* network: unknown error */
@@ -656,12 +656,12 @@ void eServiceHisilicon::netlink_event(int)
 					switch (event)
 					{
 					case 0: /* SOF */
-						eDebug("[eServiceHisilicon] event: SOF");
+						eDebug("[eServiceHisilicon][netlink_event] event: SOF");
 						/* reached SOF while rewinding */
 						m_event((iPlayableService*)this, evSOF);
 						break;
 					case 1: /* EOF */
-						eDebug("[eServiceHisilicon] event: EOF");
+						eDebug("[eServiceHisilicon][netlink_event] event: EOF");
 						m_event((iPlayableService*)this, evEOF);
 						break;
 					}
@@ -702,7 +702,7 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 	m_seekable = 0;
 	m_bufferpercentage = 0;
 
-	m_useragent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;OpenPLi;;;)";
+	m_useragent = "Enigma2 HbbTV/1.1.1 (+PVR+RTSP+DL;OpenViX;;;)";
 	m_extra_headers = "";
 	m_download_buffer_path = "";
 	m_prev_decoder_time = -1;
@@ -713,7 +713,7 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 	m_aspect = m_width = m_height = m_framerate = m_progressive = m_gamma = -1;
 
 	m_state = stIdle;
-	eDebug("[eServiceHisilicon] construct!");
+	eDebug("[eServiceHisilicon][[eServiceHisilicon]] construct!");
 
 	if (eConfigManager::getConfigBoolValue("config.mediaplayer.useAlternateUserAgent"))
 		m_useragent = eConfigManager::getConfigValue("config.mediaplayer.alternateUserAgent");
@@ -759,7 +759,7 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 	memset(&fileinfo, 0, sizeof(fileinfo));
 	memset(&streamid, 0, sizeof(streamid));
 
-	eDebug("[eServiceHisilicon] uri=%s", filename);
+	eDebug("[eServiceHisilicon][[eServiceHisilicon]] uri=%s", filename);
 
 	{
 		struct sockaddr_nl src_addr;
@@ -773,13 +773,13 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 	nlh = (struct nlmsghdr *)malloc(NLMSG_SPACE(MAX_PAYLOAD));
 	int tmp_fd = -1;
 	tmp_fd = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-	/* eDebug("[eServiceHisilicon]  Opened tmp_fd: %d", tmp_fd); */
+	/* eDebug("[eServiceHisilicon][[eServiceHisilicon]]  Opened tmp_fd: %d", tmp_fd); */
 	if (tmp_fd == 0)
 	{
 		::close(tmp_fd);
 		tmp_fd = -1;	
 		fd0lock = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
-		/* eDebug("[eServiceHisilicon] opening null fd returned: %d", fd0lock); */
+		/* eDebug("[eServiceHisilicon][[eServiceHisilicon]] opening null fd returned: %d", fd0lock); */
 	}
 	if (tmp_fd != -1)
 	{
@@ -903,6 +903,7 @@ RESULT eServiceHisilicon::start()
 
 	if (m_video_fd >= 0)
 	{
+		eDebug("[eServiceHisilicon][start] video");
 		::ioctl(m_video_fd, VIDEO_FAST_FORWARD, 0);
 		::ioctl(m_video_fd, VIDEO_SLOWMOTION, 0);
 		::ioctl(m_video_fd, VIDEO_PLAY);
@@ -910,6 +911,7 @@ RESULT eServiceHisilicon::start()
 	}
 	if (m_audio_fd >= 0)
 	{
+		eDebug("[eServiceHisilicon][start] audeo");
 		::ioctl(m_audio_fd, AUDIO_PLAY);
 		::ioctl(m_audio_fd, AUDIO_CONTINUE);
 	}
@@ -921,7 +923,7 @@ RESULT eServiceHisilicon::stop()
 	if (m_state == stStopped)
 		return -1;
 
-	eDebug("[eServiceHisilicon] stop %s", m_ref.path.c_str());
+	eDebug("[eServiceHisilicon][stop] %s", m_ref.path.c_str());
 
 	if (m_video_fd >= 0)
 	{
@@ -950,7 +952,7 @@ RESULT eServiceHisilicon::setSlowMotion(int ratio)
 {
 	if (!ratio)
 		return 0;
-	eDebug("[eServiceHisilicon] setSlowMotion ratio=%i", ratio);
+	eDebug("[eServiceHisilicon][setSlowMotion] ratio=%i", ratio);
 	if (m_video_fd >= 0)
 	{
 		::ioctl(m_video_fd, VIDEO_SLOWMOTION, ratio);
@@ -963,7 +965,7 @@ RESULT eServiceHisilicon::setSlowMotion(int ratio)
 
 RESULT eServiceHisilicon::setFastForward(int ratio)
 {
-	eDebug("[eServiceHisilicon] setFastForward ratio=%i",ratio);
+	eDebug("[eServiceHisilicon][setFastForward] ratio=%i",ratio);
 	if (m_video_fd >= 0)
 	{
 		::ioctl(m_video_fd, VIDEO_FAST_FORWARD, ratio);
@@ -980,7 +982,7 @@ RESULT eServiceHisilicon::pause()
 	if (m_state != stRunning)
 		return -1;
 
-	eDebug("[eServiceHisilicon] pause");
+	eDebug("[eServiceHisilicon][pause]");
 	if (m_video_fd >= 0)
 	{
 		::ioctl(m_video_fd, VIDEO_FREEZE);
@@ -998,7 +1000,7 @@ RESULT eServiceHisilicon::unpause()
 	if (m_state != stRunning)
 		return -1;
 
-	eDebug("[eServiceHisilicon] unpause");
+	eDebug("[eServiceHisilicon][unpause]");
 
 	if (m_video_fd >= 0)
 	{
@@ -1882,7 +1884,7 @@ int eServiceHisilicon::getCurrentChannel()
 
 RESULT eServiceHisilicon::selectChannel(int i)
 {
-	eDebug("[eServiceHisilicon] selectChannel(%i)",i);
+	eDebug("[eServiceHisilicon] [selectChannel](%i)",i);
 	return 0;
 }
 
@@ -1933,7 +1935,7 @@ RESULT eServiceHisilicon::enableSubtitles(iSubtitleUser *user, struct SubtitleTr
 		m_currentSubtitleStream = track.pid;
 		m_cachedSubtitleStream = m_currentSubtitleStream;
 
-		eDebug("[eServiceHisilicon] switched to subtitle stream %i", m_currentSubtitleStream);
+		eDebug("[eServiceHisilicon][enableSubTitles] switched to subtitle stream %i", m_currentSubtitleStream);
 	}
 
 	return 0;
@@ -1941,7 +1943,7 @@ RESULT eServiceHisilicon::enableSubtitles(iSubtitleUser *user, struct SubtitleTr
 
 RESULT eServiceHisilicon::disableSubtitles()
 {
-	eDebug("[eServiceHisilicon] disableSubtitles");
+	eDebug("[eServiceHisilicon][disableSubtitles]");
 	m_currentSubtitleStream = -1;
 	m_cachedSubtitleStream = m_currentSubtitleStream;
 	/* TODO: can we actually disable the subtitle output? */
@@ -2089,24 +2091,24 @@ void eServiceHisilicon::setCutList(ePyObject list)
 		ePyObject tuple = PyList_GET_ITEM(list, i);
 		if (!PyTuple_Check(tuple))
 		{
-			eDebug("[eServiceHisilicon] non-tuple in cutlist");
+			eDebug("[eServiceHisilicon][setCutList] non-tuple in cutlist");
 			continue;
 		}
 		if (PyTuple_Size(tuple) != 2)
 		{
-			eDebug("[eServiceHisilicon] cutlist entries need to be a 2-tuple");
+			eDebug("[eServiceHisilicon][setCutList] cutlist entries need to be a 2-tuple");
 			continue;
 		}
 		ePyObject ppts = PyTuple_GET_ITEM(tuple, 0), ptype = PyTuple_GET_ITEM(tuple, 1);
 		if (!(PyLong_Check(ppts) && PyLong_Check(ptype)))
 		{
-			eDebug("[eServiceHisilicon] cutlist entries need to be (pts, type)-tuples (%d %d)", PyLong_Check(ppts), PyLong_Check(ptype));
+			eDebug("[eServiceHisilicon][setCutList] cutlist entries need to be (pts, type)-tuples (%d %d)", PyLong_Check(ppts), PyLong_Check(ptype));
 			continue;
 		}
 		pts_t pts = PyLong_AsLongLong(ppts);
 		int type = PyLong_AsLong(ptype);
 		m_cue_entries.insert(cueEntry(pts, type));
-		eDebug("[eServiceHisilicon] adding %08llx, %d", pts, type);
+		eDebug("[eServiceHisilicon][setCutList] adding %08llx, %d", pts, type);
 	}
 	m_cuesheet_changed = 1;
 	m_event((iPlayableService*)this, evCuesheetChanged);
@@ -2163,12 +2165,12 @@ void eServiceHisilicon::loadCuesheet()
 {
 	if (!m_cuesheet_loaded)
 	{
-		eDebug("[eServiceHisilicon] loading cuesheet");
+		eDebug("[eServiceHisilicon][loadCuesheet] loading cuesheet");
 		m_cuesheet_loaded = true;
 	}
 	else
 	{
-		eDebug("[eServiceHisilicon] skip loading cuesheet multiple times");
+		eDebug("[eServiceHisilicon][loadCuesheet] skip loading cuesheet multiple times");
 		return;
 	}
  
@@ -2202,9 +2204,9 @@ void eServiceHisilicon::loadCuesheet()
 			m_cue_entries.insert(cueEntry(where, what));
 		}
 		fclose(f);
-		eDebug("[eServiceHisilicon] cuts file has %zd entries", m_cue_entries.size());
+		eDebug("[eServiceHisilicon][loadCuesheet] cuts file has %zd entries", m_cue_entries.size());
 	} else
-		eDebug("[eServiceHisilicon] cutfile not found!");
+		eDebug("[eServiceHisilicon][loadCuesheet] cutfile not found!");
 
 	m_cuesheet_changed = 0;
 	m_event((iPlayableService*)this, evCuesheetChanged);
