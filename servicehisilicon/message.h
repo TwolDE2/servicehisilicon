@@ -1,5 +1,5 @@
-#ifndef __lib_base_message_h
-#define __lib_base_message_h
+#ifndef _message_h
+#define _message_h
 
 #include <queue>
 #include <lib/base/ebase.h>
