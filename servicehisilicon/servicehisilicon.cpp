@@ -1976,7 +1976,11 @@ RESULT eServiceHisilicon::getCachedSubtitle(struct SubtitleTrack &track)
 	bool autoturnon = eConfigManager::getConfigBoolValue("config.subtitles.pango_autoturnon", true);
 	int m_subtitleStreams_size = (int)m_subtitleStreams.size();
 	if (!autoturnon)
+	{
+		eDebug("[eServiceHiSilicon] autorun subtitles not set");	
 		return -1;
+	}
+	eDebug("[eServiceHiSilicon] autorun subtitles set");
 
 	if (m_cachedSubtitleStream == -2 && m_subtitleStreams_size)
 	{
