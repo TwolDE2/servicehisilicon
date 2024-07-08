@@ -1933,7 +1933,9 @@ eAutoInitPtr<eServiceFactoryHisilicon> init_eServiceFactoryHisilicon(eAutoInitNu
 
 RESULT eServiceHisilicon::enableSubtitles(iSubtitleUser *user, struct SubtitleTrack &track)
 {
-	if (m_currentSubtitleStream != track.pid)
+	eDebug ("[eServicehisilicon][enableSubtitles] entered: subtitle stream %i track.pid %i", m_currentSubtitleStream, track.pid);
+	bool autoturnon = eConfigManager::getConfigBoolValue("config.subtitles.pango_autoturnon", true);
+	if (m_currentSubtitleStream != track.pid || autoturnon)
 	{
 		m_prev_decoder_time = -1;
 		m_decoder_time_valid_state = 0;
