@@ -246,7 +246,6 @@ private:
 	iSubtitleUser *m_subtitle_widget;
 	friend class eServiceFactoryHisilicon;
 	eServiceReference m_ref;
-	std::string m_prov;
 	bool m_paused;
 	bool m_buffering;
 	bool m_autoturnon;

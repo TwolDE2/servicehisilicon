@@ -1192,7 +1192,6 @@ RESULT eServiceHisilicon::getName(std::string &name)
 	else
 		name = title;
 
-	m_prov = m_ref.prov;
 	return 0;
 }
 
@@ -1742,16 +1741,24 @@ std::string eServiceHisilicon::getInfoString(int w)
 	{
 	case sProvider:
 	{
+		std::string prov = m_ref.getProvider();
 		if (pstProgram)
 		{
-			return pstProgram->aszServiceProvider;
+			if (prov.empty()) {
+				if (strlen(pstProgram->aszServiceProvider) == 0)
+					return "IPTV";
+				return pstProgram->aszServiceProvider;
+			} else {
+				return prov;
+			}
+
 		}
 		else
 		{
-			if (m_prov.empty()) {
+			if (prov.empty()) {
 				return "IPTV";
 			} else {
-				return m_prov;
+				return prov;
 			}
 		}
 		break;
