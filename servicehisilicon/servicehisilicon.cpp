@@ -1448,7 +1448,7 @@ const char *eServiceHisilicon::getAudFormatStr(uint32_t format)
 	switch (format)
 	{
 	case HI_FORMAT_AUDIO_MP2:
-		return "MPEG2";
+		return "MPEG";
 		break;
 	case HI_FORMAT_AUDIO_MP3:
 		return "MPEG3";
