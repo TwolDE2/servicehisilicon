@@ -2126,6 +2126,7 @@ RESULT eServiceHisilicon::getSubtitleList(std::vector<struct SubtitleTrack> &sub
 			{
 				track.type = 0;
 				track.page_number = 7;
+				break;
 			}
 			case HI_FORMAT_SUBTITLE_LRC:
 			case HI_FORMAT_SUBTITLE_SMI:
