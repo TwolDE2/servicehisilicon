@@ -2122,7 +2122,11 @@ RESULT eServiceHisilicon::getSubtitleList(std::vector<struct SubtitleTrack> &sub
 			case HI_FORMAT_SUBTITLE_DVD_SUB:
 				track.page_number = 5; /* VOB */
 				break;
-			case HI_FORMAT_SUBTITLE_DVB_SUB: /* should not happen in ES media */
+			case HI_FORMAT_SUBTITLE_DVB_SUB: /* DVB */
+			{
+				track.type = 0;
+				track.page_number = 7;
+			}
 			case HI_FORMAT_SUBTITLE_LRC:
 			case HI_FORMAT_SUBTITLE_SMI:
 			case HI_FORMAT_SUBTITLE_SUB:
