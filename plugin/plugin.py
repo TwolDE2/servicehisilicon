@@ -9,7 +9,7 @@ def autostart(reason, **kwargs):
 
 def Plugins(**kwargs):
 	try:
-		if config.misc.disableServicehisilicon.value:
+		if config.misc.disableServiceHiSilicon.value:
 			return []
 	except Exception:
 		pass
