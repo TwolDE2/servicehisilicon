@@ -1,6 +1,5 @@
-from __future__ import absolute_import
-from Plugins.Plugin import PluginDescriptor
 from Components.config import config
+from Plugins.Plugin import PluginDescriptor
 
 
 def autostart(reason, **kwargs):
