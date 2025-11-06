@@ -732,8 +732,8 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 	std::string sref = ref.toString();
 	eDebug("[eServiceHisilicon] Init start %s", ref.toString().c_str());
 	size_t pos = m_ref.path.find('media');
-	size_t pos2 = m_ref.path.find('mkv');	
-	if (pos == std::string::npos && pos2 == std::string::npos)		
+	size_t pos2 = m_ref.path.find('mkv');
+	if (pos == std::string::npos && pos2 == std::string::npos)
 	{	
 		if (!sref.empty())
 		{
@@ -746,7 +746,7 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 					m_currentAudioStream = it->ampeg_pid;
 					m_currentSubtitleStream = it->subtitle_pid;
 					m_cachedSubtitleStream = m_currentSubtitleStream;
-					eDebug("[eServiceHisilicon] Init start iptv_service use sref pid's");				
+					eDebug("[eServiceHisilicon] Init start iptv_service use sref pid's");
 				}
 			}
 		}
@@ -763,7 +763,7 @@ eServiceHisilicon::eServiceHisilicon(eServiceReference ref):
 
 	const char *filename;
 	std::string filename_str;
-	pos = m_ref.path.find('#');
+	size_t pos = m_ref.path.find('#');
 	if (pos != std::string::npos && (m_ref.path.compare(0, 4, "http") == 0 || m_ref.path.compare(0, 4, "rtsp") == 0))
 	{
 		filename_str = m_ref.path.substr(0, pos);
